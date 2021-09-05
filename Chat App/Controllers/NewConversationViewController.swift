@@ -9,6 +9,8 @@ import UIKit
 import JGProgressHUD
 
 class NewConversationViewController: UIViewController {
+    public var completion: (([String: String]) -> (Void))?
+    
     private let spinner = JGProgressHUD(style: .dark)
     
     private var users = [[String: String]]()
@@ -62,6 +64,7 @@ class NewConversationViewController: UIViewController {
         tableView.frame = view.bounds
         noResultLabel.frame = CGRect(x: view.width / 4, y: (view.height - 200) / 2, width: view.width / 2, height: 200)
     }
+    
     
     @objc func dismissSelf() {
         dismiss(animated: true, completion: nil)
@@ -151,5 +154,10 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         //start conversation
+        let targetUserData = results[indexPath.row]
+        
+        dismiss(animated: true, completion: { [weak self] in
+            self?.completion?(targetUserData)
+        })
     }
 }
