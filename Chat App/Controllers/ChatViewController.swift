@@ -61,8 +61,9 @@ class ChatViewController: MessagesViewController {
         return formatter
     }()
     
-    public var isNewConversation = false
     public let otherUserEmail: String
+    private let conversationId: String?
+    public var isNewConversation = false
     
     private var messages = [Message]()
     
@@ -71,12 +72,19 @@ class ChatViewController: MessagesViewController {
             return nil
         }
         
-        return Sender(photoURL: "", senderId: email as! String, displayName: "Sender")
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email as! String)
+        
+        return Sender(photoURL: "", senderId: safeEmail , displayName: "Me")
+        
     }()
     
-    init(with email: String) {
+    init(with email: String, id: String?) {
+        self.conversationId = id
         self.otherUserEmail = email
         super.init(nibName: nil, bundle: nil)
+        if let conversationId = self.conversationId {
+            listenForMessage(id: conversationId, shouldScrollToBottom: true)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -95,6 +103,28 @@ class ChatViewController: MessagesViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         messageInputBar.inputTextView.becomeFirstResponder()
+    }
+    
+    
+    private func listenForMessage(id: String, shouldScrollToBottom: Bool) {
+        DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { [weak self] result in
+            switch result {
+            case .success(let messages):
+                guard !messages.isEmpty else {
+                    return
+                }
+                self?.messages = messages
+                
+                DispatchQueue.main.async {
+                    self?.messagesCollectionView.reloadDataAndKeepOffset()
+                    if shouldScrollToBottom {
+                        self?.messagesCollectionView.scrollToBottom(animated: true)
+                    }
+                }
+            case .failure(let error):
+                print("Fail to get all messages: \(error)")
+            }
+        })
     }
 
 }

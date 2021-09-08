@@ -251,6 +251,8 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
                             return
                         }
                         
+                        UserDefaults.standard.setValue(email, forKey: "email")
+                        
                         let fileName = chatUser.profilePictureFileName
                         storageManager.shared.uploadFrofilePicture(with: data, fileName: fileName, completion: { result in
                             switch result {
