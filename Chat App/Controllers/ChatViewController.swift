@@ -118,7 +118,7 @@ class ChatViewController: MessagesViewController {
                 DispatchQueue.main.async {
                     self?.messagesCollectionView.reloadDataAndKeepOffset()
                     if shouldScrollToBottom {
-                        self?.messagesCollectionView.scrollToBottom(animated: true)
+                        self?.messagesCollectionView.scrollToLastItem(animated: true)
                     }
                 }
             case .failure(let error):
@@ -135,19 +135,33 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             return
         }
         
+        let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), kind: .text(text))
+        
         // send message
         if isNewConversation {
             // create new conversation in database
-            let message = Message(sender: selfSender, messageId: messageId, sentDate: Date(), kind: .text(text))
-            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: message, completion: { success in
+            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: message, completion: { [weak self] success in
                 if success {
                     print("Message sent")
+                    self?.isNewConversation = false
                 } else {
                     print("Fail to send")
                 }
             })
         } else {
             //append to existed conversation data
+            guard let conversationId = conversationId, let name = self.title else {
+                return
+            }
+            
+            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: otherUserEmail, name: name,newMessage: message, completion: {
+                success in
+                if success {
+                    print("Message sent")
+                } else {
+                    print("Fail to send")
+                }
+            })
         }
     }
     

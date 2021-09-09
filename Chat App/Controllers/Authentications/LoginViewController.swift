@@ -173,7 +173,25 @@ class LoginViewController: UIViewController {
             let user = result.user
             print("Logged in user: \(user)")
             
-            UserDefaults.standard.set(self?.emailField.text!, forKey: "email")
+            guard let email = self?.emailField.text else { return }
+            
+            let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+            DatabaseManager.shared.getDataFor(path: safeEmail, completion: { result in
+                switch result {
+                case .success(let data):
+                    guard let userData = data as? [String: Any],
+                          let firstName = userData["first_name"] as? String,
+                          let lastName = userData["last_name"] as? String else {
+                        return
+                    }
+                    
+                    UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+                case .failure(let error):
+                    print("Error in getting user's info: \(error)")
+                }
+            })
+            
+            UserDefaults.standard.set(email, forKey: "email")
             
             self?.navigationController?.dismiss(animated: true, completion: nil)
         })
@@ -210,6 +228,7 @@ class LoginViewController: UIViewController {
             guard let email = user.profile?.email, let firstName = user.profile?.givenName, let lastName = user.profile?.familyName else { return }
             
             UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
             
             DatabaseManager.shared.userExists(with: email, completion: { exists in
                 if !exists {
@@ -334,6 +353,7 @@ extension LoginViewController: LoginButtonDelegate {
             }
             
             UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
             
             DatabaseManager.shared.userExists(with: email, completion: { exists in
                 let chatUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
