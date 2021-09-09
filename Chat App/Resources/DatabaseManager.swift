@@ -373,7 +373,7 @@ extension DatabaseManager {
     /// Get all messages for a given conversations
     public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
         database.child("\(id)/messages").observe(.value, with: { snapshot in
-            print("getAllMessagesForConversation: \(id)")
+            //print("getAllMessagesForConversation: \(id)")
             guard let value = snapshot.value as? [[String: Any]] else {
                 completion(.failure(DatabaseError.failedToFetch))
                 return
@@ -479,10 +479,61 @@ extension DatabaseManager {
                         return
                     }
                     
+                    let updateValue: [String: Any] = [
+                        "date": dateString,
+                        "message": message,
+                        "is_read": false
+                    ]
+                    var position = 0
                     
+                    for conversationDictionary in currentUserConversation {
+                        if let currentId = conversationDictionary["id"] as? String, currentId == conversation {
+                            break
+                        }
+                        position += 1
+                    }
+                    
+                    currentUserConversation[position]["latest_message"] = updateValue
+                    
+                    self?.database.child("\(currentEmail)/conversations").setValue(currentUserConversation, withCompletionBlock: { error, _ in
+                        guard error == nil else {
+                            completion(false)
+                            return
+                        }
+                        
+                        //Update latest message for recipient user
+                        self?.database.child("\(otherUserEmail)/conversations").observeSingleEvent(of: .value, with: { snapshot in
+                            guard var otherUserConversation = snapshot.value as? [[String: Any]] else {
+                                completion(false)
+                                return
+                            }
+                            let updateValue: [String: Any] = [
+                                "date": dateString,
+                                "message": message,
+                                "is_read": false
+                            ]
+                            var position = 0
+                            
+                            for conversationDictionary in otherUserConversation {
+                                if let currentId = conversationDictionary["id"] as? String, currentId == conversation {
+                                    break
+                                }
+                                position += 1
+                            }
+                            
+                            otherUserConversation[position]["latest_message"] = updateValue
+                            
+                            self?.database.child("\(otherUserEmail)/conversations").setValue(otherUserConversation, withCompletionBlock: { error, _ in
+                                guard error == nil else {
+                                    completion(false)
+                                    return
+                                }
+                                
+                                completion(true)
+                            })
+                        })
+                    })
                 })
-                
-                completion(true)
             })
         })
     }
