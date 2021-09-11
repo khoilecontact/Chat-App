@@ -63,25 +63,27 @@ final class storageManager {
     
     /// Upload video that will be sent in a conversation to Firebase storage and return url string to download
     public func uploadMessageVideo(with fileUrl: URL, fileName: String, completion: @escaping UploadPictureCompletion) {
-        storage.child("message_videos/\(fileName)").putFile(from: fileUrl, metadata: nil, completion: { metadata, error in
-            guard error == nil else {
-                print("Failed to upload conversation's video: \(String(describing: error))")
-                completion(.failure(storageError.failedToUpload))
-                return
-            }
-            
-            self.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
-                guard let url = url, error == nil else {
-                    print("Failed to get download URL")
-                    completion(.failure(storageError.failedToDownloadURL))
+        if let videoData = NSData(contentsOf: fileUrl) as Data? {
+            storage.child("message_videos/\(fileName)").putData( videoData, metadata: nil, completion: { metadata, error in
+                guard error == nil else {
+                    print("Failed to upload conversation's video: \(String(describing: error))")
+                    completion(.failure(storageError.failedToUpload))
                     return
                 }
                 
-                let urlString = url.absoluteString
-                print("Download URL returned: \(urlString)")
-                completion(.success(urlString))
+                self.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
+                    guard let url = url, error == nil else {
+                        print("Failed to get download URL")
+                        completion(.failure(storageError.failedToDownloadURL))
+                        return
+                    }
+                    
+                    let urlString = url.absoluteString
+                    print("Download URL returned: \(urlString)")
+                    completion(.success(urlString))
+                })
             })
-        })
+        }
     }
     
     public enum storageError: Error {
