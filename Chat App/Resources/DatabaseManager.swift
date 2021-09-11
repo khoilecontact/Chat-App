@@ -203,7 +203,7 @@ extension DatabaseManager {
             }
             
             let messageDate = firstMessage.sentDate
-            let dateString = ChatViewController.dataFormatter.string(from: messageDate)
+            let dateString = ChatViewController.dateFormatter.string(from: messageDate)
             let conversationId =  firstMessage.messageId
             
             let newConversationData: [String: Any] = [
@@ -309,7 +309,7 @@ extension DatabaseManager {
         }
         
         let messageDate = firstMessage.sentDate
-        let dateString = ChatViewController.dataFormatter.string(from: messageDate)
+        let dateString = ChatViewController.dateFormatter.string(from: messageDate)
         
         guard let myEmail = UserDefaults.standard.value(forKey: "email") else {
             return
@@ -379,6 +379,7 @@ extension DatabaseManager {
                 completion(.failure(DatabaseError.failedToFetch))
                 return
             }
+            print(value)
             
             let messages: [Message] = value.compactMap({ dictionary in
                 guard let name = dictionary["name"] as? String,
@@ -388,18 +389,25 @@ extension DatabaseManager {
                       let senderEmail = dictionary["sender_email"] as? String,
                       let dateString = dictionary["date"] as? String,
                       let type = dictionary["type"] as? String,
-                      let date = ChatViewController.dataFormatter.date(from: dateString)
+                      let date = ChatViewController.dateFormatter.date(from: dateString)
                       else {
+                    print("A value is wrong")
                     return nil
                 }
                 
                 var kind: MessageKind?
                 if type == "photo" {
-                    guard let imageUrl = URL(string: content), let placeholder = UIImage(systemName: "plus") else {
+                    guard let imageUrl = URL(string: content), let placeholder = UIImage(named: "ImagePlaceholder") else {
                         return nil
                     }
                     let media = Media(url: imageUrl, image: nil, placeholderImage: placeholder, size: CGSize(width: 300, height: 300))
                     kind = .photo(media)
+                } else if type == "video" {
+                    guard let videoUrl = URL(string: content), let placeholder = UIImage(named: "VideoPlaceholder") else {
+                        return nil
+                    }
+                    let media = Media(url: videoUrl, image: nil, placeholderImage: placeholder, size: CGSize(width: 300, height: 300))
+                    kind = .video(media)
                 } else {
                     kind = .text(content)
                 }
@@ -446,7 +454,11 @@ extension DatabaseManager {
                     message = targetUrlString
                 }
                 break
-            case .video(_):
+            case .video(let mediaItem):
+                print("Video recieve")
+                if let targetUrlString = mediaItem.url?.absoluteString {
+                    message = targetUrlString
+                }
                 break
             case .location(_):
                 break
@@ -463,7 +475,7 @@ extension DatabaseManager {
             }
             
             let messageDate = newMessage.sentDate
-            let dateString = ChatViewController.dataFormatter.string(from: messageDate)
+            let dateString = ChatViewController.dateFormatter.string(from: messageDate)
             //let conversationId =  newMessage.messageId
             
             guard let myEmail = UserDefaults.standard.value(forKey: "email") else {
