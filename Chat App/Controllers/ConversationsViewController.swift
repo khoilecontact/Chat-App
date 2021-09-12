@@ -43,6 +43,8 @@ class ConversationsViewController: UIViewController {
         label.isHidden = true
         return label
     }()
+    
+    private var loginObserver: NSObjectProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +53,11 @@ class ConversationsViewController: UIViewController {
         view.addSubview(noConversationLabel)
         setUpTableView()
         startListeningForConversations()
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: Notification.Name.didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
+            
+            self?.fetchConversations()
+        })
     }
     
     override func viewDidLayoutSubviews() {
@@ -91,6 +98,10 @@ class ConversationsViewController: UIViewController {
             return
         }
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email as! String)
+        
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
         
         DatabaseManager.shared.getAllConversations(for: safeEmail, completion: { [weak self] result in
             switch result {
@@ -155,6 +166,26 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            //Begin delete
+            tableView.beginUpdates()
+            
+            DatabaseManager.shared.deleteConversation(conversationId: conversations[indexPath.row].id, completion: { [weak self] success in
+                if success {
+                    self?.conversations.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .left)
+                }
+            })
+            
+            tableView.endUpdates()
+        }
     }
 }
 
