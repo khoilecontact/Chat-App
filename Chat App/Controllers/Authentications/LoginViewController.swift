@@ -44,7 +44,7 @@ class LoginViewController: UIViewController {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         
         return field
     }()
@@ -62,7 +62,7 @@ class LoginViewController: UIViewController {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         field.isSecureTextEntry = true
         
         return field
@@ -98,7 +98,7 @@ class LoginViewController: UIViewController {
             self?.navigationController?.dismiss(animated: true, completion: nil)
         })
         
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
         
@@ -132,11 +132,12 @@ class LoginViewController: UIViewController {
         scrollView.frame = view.bounds
         
         let size = scrollView.width / 3
-        imageView.frame = CGRect(x: size / 1.5, y: 20, width: size * 1.5, height: size * 1.5)
+        imageView.frame = CGRect(x: size, y: 20, width: size, height: size)
+        imageView.backgroundColor = .systemBackground
         
-        emailField.frame = CGRect(x: 30, y: imageView.bottom, width: scrollView.width - 60, height: 52)
+        emailField.frame = CGRect(x: 30, y: imageView.bottom + 40, width: scrollView.width - 60, height: 52)
         
-        passwordField.frame = CGRect(x: 30, y: emailField.bottom + 20 , width: scrollView.width - 60, height: 52)
+        passwordField.frame = CGRect(x: 30, y: emailField.bottom + 30 , width: scrollView.width - 60, height: 52)
         
         loginButton.frame = CGRect(x: 30, y: passwordField.bottom + 30 , width: scrollView.width - 60, height: 52)
         

@@ -26,6 +26,7 @@
 		229234A826DD1569002A2EC2 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229234A726DD1569002A2EC2 /* ProfileViewController.swift */; };
 		229234AB26DD1F59002A2EC2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229234AA26DD1F59002A2EC2 /* Extensions.swift */; };
 		229234B026DDDF6C002A2EC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 229234AF26DDDF6C002A2EC2 /* GoogleService-Info.plist */; };
+		22C1950526F1CFC300D75E0E /* LocationPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C1950426F1CFC300D75E0E /* LocationPickerViewController.swift */; };
 		99A4AE321F4FC0621F5B76E2 /* Pods_Chat_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1688E62E8BD30F26F55B01F5 /* Pods_Chat_App.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		229234A726DD1569002A2EC2 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		229234AA26DD1F59002A2EC2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		229234AF26DDDF6C002A2EC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		22C1950426F1CFC300D75E0E /* LocationPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerViewController.swift; sourceTree = "<group>"; };
 		51C1CBB7538D1B4EA44E4554 /* Pods-Chat App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat App.release.xcconfig"; path = "Target Support Files/Pods-Chat App/Pods-Chat App.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,6 +128,7 @@
 				229234A526DD155E002A2EC2 /* NewConversationViewController.swift */,
 				229234A726DD1569002A2EC2 /* ProfileViewController.swift */,
 				2206A95726E0918B00958BDF /* ChatViewController.swift */,
+				22C1950426F1CFC300D75E0E /* LocationPickerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				2206A95826E0918B00958BDF /* ChatViewController.swift in Sources */,
 				229234A226DD153E002A2EC2 /* PhotoViewerViewController.swift in Sources */,
 				2206A95A26E0BC2B00958BDF /* StorageManager.swift in Sources */,
+				22C1950526F1CFC300D75E0E /* LocationPickerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

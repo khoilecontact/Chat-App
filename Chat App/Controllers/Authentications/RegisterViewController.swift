@@ -47,7 +47,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         
         return field
     }()
@@ -65,7 +65,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         field.isSecureTextEntry = true
         
         return field
@@ -84,7 +84,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         field.isSecureTextEntry = true
         
         return field
@@ -104,7 +104,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         
         return field
     }()
@@ -123,7 +123,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
         
-        field.backgroundColor = .white
+        field.backgroundColor = .secondarySystemBackground
         
         return field
     }()
@@ -144,7 +144,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         title = "Create Account"
         
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(registerButtonTapped))
         
