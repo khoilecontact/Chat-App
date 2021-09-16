@@ -38,6 +38,9 @@ class ProfileViewController: UIViewController {
             let actionSheet = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
             actionSheet.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { [weak self] _ in
                 
+                UserDefaults.standard.setValue(nil, forKey: "email")
+                UserDefaults.standard.setValue(nil, forKey: "name")
+                
                 // Log out Facebook
                 FBSDKLoginKit.LoginManager().logOut()
                 
@@ -83,7 +86,7 @@ class ProfileViewController: UIViewController {
         let imageView = UIImageView(frame: CGRect(x: (headerView.width - 150) / 2, y: 45, width: 150, height: 150))
         
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemBackground
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.borderWidth = 3
         imageView.layer.masksToBounds = true

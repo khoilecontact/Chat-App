@@ -56,13 +56,13 @@ class ConversationsViewController: UIViewController {
         
         loginObserver = NotificationCenter.default.addObserver(forName: Notification.Name.didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
             
-            self?.fetchConversations()
         })
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
+        noConversationLabel.frame = CGRect(x: 10, y: (view.height - 100) / 2, width: view.width - 20, height: 100)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -87,11 +87,6 @@ class ConversationsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
     }
-
-    private func fetchConversations() {
-        tableView.isHidden = false
-        
-    }
     
     private func startListeningForConversations() {
         guard let email = UserDefaults.standard.value(forKey: "email") else {
@@ -107,8 +102,12 @@ class ConversationsViewController: UIViewController {
             switch result {
             case .success(let conversations):
                 guard !conversations.isEmpty else {
+                    self?.tableView.isHidden = true
+                    self?.noConversationLabel.isHidden = false
                     return
                 }
+                self?.noConversationLabel.isHidden = true
+                self?.tableView.isHidden = false
                 self?.conversations = conversations
                 
                 DispatchQueue.main.async {

@@ -209,7 +209,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
             alertUserLoginError()
         }
         
-        guard let email = emailField.text, let password = passwordField.text else {
+        guard let email = emailField.text, let password = passwordField.text, let firstName = firstNameField.text, let lastName = lastNameField.text else {
             return
         }
         
@@ -232,6 +232,9 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate {
                 DispatchQueue.main.async {
                     self?.spinner.dismiss()
                 }
+                
+                UserDefaults.standard.setValue(email, forKey: "email")
+                UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
                 
                 guard authResult != nil, error == nil else {
                     print("Error creating User: \(String(describing: error))")
