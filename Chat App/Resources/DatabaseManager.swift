@@ -10,8 +10,13 @@ import FirebaseDatabase
 import MessageKit
 import CoreLocation
 
+/// Manager object to read and write to real time database in Firebase
 final class DatabaseManager {
-    static let shared = DatabaseManager()
+    ///Shared instance of class
+    public static let shared = DatabaseManager()
+    
+    //force to use this init
+    private init() {}
     
     private let database = Database.database().reference()
     
@@ -24,6 +29,9 @@ final class DatabaseManager {
 }
 
 extension DatabaseManager {
+    ///Check if user exists for given email
+    ///- email: Target email to be checked
+    ///- completion: Async closure to return with result
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         database.child(safeEmail).observeSingleEvent(of: .value, with: {snapshot in
@@ -36,6 +44,7 @@ extension DatabaseManager {
 
     }
     
+    ///Get all users from database
     public func getAllUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void) {
         database.child("users").observeSingleEvent(of: .value, with: { snapshot in
             guard let value = snapshot.value as? [[String: String]] else {
@@ -70,14 +79,14 @@ extension DatabaseManager {
         database.child(user.safeEmail).setValue([
             "first_name": user.firstName,
             "last_name": user.lastName
-        ], withCompletionBlock: { error, datareference in
+        ], withCompletionBlock: { [weak self] error, datareference in
             guard error ==  nil else {
                 print("Failed to write to database")
                 completion(false)
                 return
             }
             
-            self.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+            self?.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
                 if var usersCollection = snapshot.value as? [[String: String]] {
                     //append to user dictionary
                     let newElement = [
@@ -86,7 +95,7 @@ extension DatabaseManager {
                     ]
                     usersCollection.append(newElement)
                     
-                    self.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
+                    self?.database.child("users").setValue(usersCollection, withCompletionBlock: { error, _ in
                         guard error == nil else {
                             completion(false)
                             return
@@ -102,7 +111,7 @@ extension DatabaseManager {
                             "email": user.safeEmail
                         ]
                     ]
-                    self.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
+                    self?.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
                         guard error == nil else {
                             completion(false)
                             return
@@ -119,7 +128,7 @@ extension DatabaseManager {
 
 extension DatabaseManager {
     public func getDataFor(path: String, completion: @escaping (Result<Any, Error>) -> Void) {
-        self.database.child("\(path)").observeSingleEvent(of: .value, with: { snapshot in
+        database.child("\(path)").observeSingleEvent(of: .value, with: { snapshot in
             guard let value = snapshot.value else {
                 completion(.failure(DatabaseError.failedToFetch))
                 return

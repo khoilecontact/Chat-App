@@ -57,12 +57,16 @@ class ConversationsViewController: UIViewController {
         loginObserver = NotificationCenter.default.addObserver(forName: Notification.Name.didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
             
         })
+    
+        
     }
+
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
         noConversationLabel.frame = CGRect(x: 10, y: (view.height - 100) / 2, width: view.width - 20, height: 100)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {

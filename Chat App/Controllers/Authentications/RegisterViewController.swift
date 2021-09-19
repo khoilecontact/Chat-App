@@ -389,7 +389,7 @@ extension RegisterViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         let selectedImage = info[UIImagePickerController.InfoKey.editedImage]
-        self.imageView.image = selectedImage as? UIImage
+        imageView.image = selectedImage as? UIImage
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

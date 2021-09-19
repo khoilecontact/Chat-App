@@ -8,8 +8,12 @@
 import Foundation
 import FirebaseStorage
 
+//Allow get, fetch and upload files to Firebase storage
 final class storageManager {
     static let shared = storageManager()
+    
+    //force to use this init
+    private init() {}
     
     private let storage = Storage.storage().reference()
     
@@ -64,14 +68,14 @@ final class storageManager {
     /// Upload video that will be sent in a conversation to Firebase storage and return url string to download
     public func uploadMessageVideo(with fileUrl: URL, fileName: String, completion: @escaping UploadPictureCompletion) {
         if let videoData = NSData(contentsOf: fileUrl) as Data? {
-            storage.child("message_videos/\(fileName)").putData( videoData, metadata: nil, completion: { metadata, error in
+            storage.child("message_videos/\(fileName)").putData( videoData, metadata: nil, completion: { [weak self] metadata, error in
                 guard error == nil else {
                     print("Failed to upload conversation's video: \(String(describing: error))")
                     completion(.failure(storageError.failedToUpload))
                     return
                 }
                 
-                self.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
+                self?.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
                     guard let url = url, error == nil else {
                         print("Failed to get download URL")
                         completion(.failure(storageError.failedToDownloadURL))
@@ -91,6 +95,7 @@ final class storageManager {
         case failedToDownloadURL
     }
     
+    ///Download the url from the Firebase storage
     public func downloadUrl(for path: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let reference = storage.child(path)
         
